@@ -22,8 +22,7 @@ By isolating the business logic into custom hooks (`useCalendar` and `useNotes`)
 1. Install Dependencies
 Bash
 npm install
-# or
-yarn install
+
 2. Verify Assets
 Ensure your local month images are placed in the following directory:
 public/Assets/
