@@ -18,3 +18,18 @@ Before writing a single line of React, I mapped out the state flow and component
 ![Architecture Sketch](./public/Assets/architecture-sketch.png)
 
 By isolating the business logic into custom hooks (`useCalendar` and `useNotes`), the main UI component remains purely declarative and focused on rendering the CSS animations.
+## How to run locally
+1. Install Dependencies
+Bash
+npm install
+# or
+yarn install
+2. Verify Assets
+Ensure your local month images are placed in the following directory:
+public/Assets/
+Required files: January.png, February.png, ..., December.png.
+
+3. Run the Development Server
+Bash
+npm run dev
+Open http://localhost:3000 in your browser to see the result.
