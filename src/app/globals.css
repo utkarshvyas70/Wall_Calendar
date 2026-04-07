@@ -1,26 +1,106 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --cal-max-width: 920px;
+  --pad-desktop: 2.5rem;
+  --pad-mobile: 1.5rem;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #F7F4EF; 
+  color: #111111;
+  overflow-x: hidden;
+}
+
+.paper-noise {
+  position: fixed;
+  inset: 0;
+  opacity: 0.06;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  z-index: 50;
+}
+
+.chevron-cut { clip-path: polygon(0 0, 100% 0, 100% 50%, 50% 100%, 0 50%); }
+
+.premium-shadow {
+  box-shadow: 0 12px 48px rgba(27, 45, 79, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+/* --- PHASE 5 ANIMATIONS --- */
+
+/* 1. Page Load */
+.animate-page-load { animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 2. Month Slide Transition */
+.animate-slide-in-left { animation: slideInLeft 220ms ease-in-out forwards; }
+.animate-slide-in-right { animation: slideInRight 220ms ease-in-out forwards; }
+@keyframes slideInLeft {
+  0% { opacity: 0; transform: translateX(20px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideInRight {
+  0% { opacity: 0; transform: translateX(-20px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+/* 3. Hero Image Crossfade */
+.animate-crossfade { animation: crossFade 300ms ease-in-out forwards; }
+@keyframes crossFade {
+  from { opacity: 0.4; }
+  to { opacity: 0.8; } /* max opacity of image overlay */
+}
+
+/* 4. Pop-in for Selection Circles */
+.animate-pop-in { animation: popIn 150ms cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+@keyframes popIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* 5. Range Band Ink Spread (Staggered opacity) */
+.animate-ink-spread {
+  animation: inkSpread 200ms ease-out forwards;
+  opacity: 0; /* Starts hidden, animation fills it in */
+}
+@keyframes inkSpread {
+  from { opacity: 0; background-color: transparent; }
+  to { opacity: 1; background-color: #D6E8F5; }
+}
+
+/* 6. Simple Spiral Binding Fade */
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* --- NATIVE CSS TOOLTIP --- */
+.holiday-tooltip {
+  position: relative;
+}
+.holiday-tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 110%;
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background-color: #1B2D4F;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 2px;
+  font-size: 10px;
+  font-family: var(--font-dm-sans, sans-serif);
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 150ms ease, transform 150ms ease;
+  pointer-events: none;
+  z-index: 50;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+.holiday-tooltip:hover::after {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
 }

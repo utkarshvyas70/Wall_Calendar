@@ -1,36 +1,20 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Architectural Decisions & Philosophy
 
-## Getting Started
+This project was built to test how close web technologies can emulate the tactile, premium feel of physical print design, without sacrificing performance.
 
-First, run the development server:
+* **Why Cormorant Garamond?** Typography dictates the weight of an interface. I needed a high-contrast serif to mimic premium editorial stationery. Cormorant Garamond provides extreme contrast in its weight transitions, giving the headers an "ink-pressed" feel that generic sans-serifs simply cannot achieve.
+* **Why no Date Libraries?** Libraries like `date-fns` or `moment.js` are massive overkill for generating a 42-cell grid. I opted to build a custom `useCalendar` hook using the native JavaScript `Date` object (specifically leveraging `new Date(year, month, 0)` to calculate month boundaries). This keeps the logic precise, the dependencies at zero, and the bundle size microscopic.
+* **Why `localStorage` over a Backend?** For a personal utility like a physical wall calendar, latency is the enemy. By utilizing `localStorage` to persist the Notes and the Base64 custom Hero Images, the app achieves absolute zero-latency updates. It feels like an instant, native application.
+* **Animations & Performance:** I strictly avoided heavy animation libraries like Framer Motion. Every micro-interaction (the `popIn` selection, the staggered `inkSpread` range band, the `slideIn` transitions) is powered by vanilla CSS keyframes and `requestAnimationFrame` hooks. This ensures consistent 60fps rendering even on lower-end mobile devices.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+#### What I'd Build Next (Given another week)
+1.  **IndexedDB Image Storage:** Base64 strings chew through the `localStorage` 5MB quota quickly. I'd migrate the image blobs to IndexedDB to allow high-res photo uploads without ceiling limits.
+2.  **iCal Parsing Web Worker:** I would write a web worker to ingest standard `.ics` feeds (from Google/Apple Calendar) and map real user events onto the UI grid without blocking the main render thread.
+3.  **Drag-to-Select:** Upgrading the 3-click date range architecture to allow fluid, mouse-down/drag highlighting across the grid cells.
+## Engineering Process & Architecture
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Before writing a single line of React, I mapped out the state flow and component responsibilities. My primary constraint was to build complex date-range logic without relying on heavy libraries like `date-fns` or `moment.js`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+![Architecture Sketch](./public/Assets/architecture-sketch.png)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+By isolating the business logic into custom hooks (`useCalendar` and `useNotes`), the main UI component remains purely declarative and focused on rendering the CSS animations.
